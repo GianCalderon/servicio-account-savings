@@ -30,133 +30,68 @@ import reactor.core.publisher.Mono;
 @RestController
 @RequestMapping("api/savingsAccount")
 public class SavingsAccountController {
-	
-	
-	private static final Logger log =LoggerFactory.getLogger(SavingsAccountController.class);
-	
-	
+
+	private static final Logger log = LoggerFactory.getLogger(SavingsAccountController.class);
+
 	@Autowired
-   SavingsAccountImpl service;
-	
+	SavingsAccountImpl service;
+
 	@Autowired
-	PersonalImplDto serviceDirecto;
-	 
-	  @GetMapping
-	  public Mono<ResponseEntity<Flux<SavingsAccount>>> toList() {
+	SavingsAccountImplDto serviceDto;
 
-	    return Mono.just(ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON_UTF8)
-	    		.body(service.findAll()));
+	@GetMapping
+	public Mono<ResponseEntity<Flux<SavingsAccount>>> toList() {
 
-	  }
+		return Mono.just(ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(service.findAll()));
 
-	  @GetMapping("/{id}")
-	  public Mono<ResponseEntity<SavingsAccount>> search(@PathVariable String id) {
+	}
 
-	    return service.findById(id).map(s->ResponseEntity.ok()
-					.contentType(MediaType.APPLICATION_JSON_UTF8)
-					.body(s))
-					.defaultIfEmpty(ResponseEntity.notFound().build());
+	@GetMapping("/{id}")
+	public Mono<ResponseEntity<SavingsAccount>> search(@PathVariable String id) {
 
-		}
+		return service.findById(id).map(s -> ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(s))
+				.defaultIfEmpty(ResponseEntity.notFound().build());
 
-		@PostMapping
-		public Mono<ResponseEntity<SavingsAccount>> save(@RequestBody SavingsAccount savingsAccount) {
-		
+	}
 
-			return service.save(savingsAccount).map(s->ResponseEntity
-					.created(URI.create("/api/savingsAccount".concat(s.getId())))
-					.contentType(MediaType.APPLICATION_JSON_UTF8)
-					.body(s));
+	@PostMapping
+	public Mono<ResponseEntity<SavingsAccount>> save(@RequestBody SavingsAccount savingsAccount) {
 
-		}
-		
-		@PostMapping("/directo")
-		public Mono<PersonalDto> saveDtoDirecto(@RequestBody PersonalDto directo) {
-		
+		return service.save(savingsAccount)
+				.map(s -> ResponseEntity.created(URI.create("/api/savingsAccount".concat(s.getId())))
+						.contentType(MediaType.APPLICATION_JSON).body(s));
 
-			return serviceDirecto.save(directo);
+	}
 
-		}
+	@PutMapping("/{id}")
+	public Mono<ResponseEntity<SavingsAccount>> update(@RequestBody SavingsAccount savingsAccount,
+			@PathVariable String id) {
 
-		@PutMapping("/{id}")
-		public Mono<ResponseEntity<SavingsAccount>> update(@RequestBody SavingsAccount savingsAccount, @PathVariable String id) {
+		return service.update(savingsAccount, id)
+				.map(s -> ResponseEntity.created(URI.create("/api/savingsAccount".concat(s.getId())))
+						.contentType(MediaType.APPLICATION_JSON).body(s))
+				.defaultIfEmpty(ResponseEntity.notFound().build());
 
-			return service.update(savingsAccount, id).map(s->ResponseEntity
-							.created(URI.create("/api/savingsAccount".concat(s.getId())))
-							.contentType(MediaType.APPLICATION_JSON_UTF8)
-							.body(s))
-					.defaultIfEmpty(ResponseEntity.notFound().build());
-				
-		
-		}
-		
-		@DeleteMapping("/{id}")
-		public Mono<ResponseEntity<Void>> delete(@PathVariable String id) {
-			
-			return service.findById(id).flatMap(s->{
-				return service.delete(s).then(Mono.just(new ResponseEntity<Void>(HttpStatus.ACCEPTED)));
-			}).defaultIfEmpty(new ResponseEntity<Void>(HttpStatus.NOT_FOUND));
+	}
 
-			
-		}
-		
+	@DeleteMapping("/{id}")
+	public Mono<ResponseEntity<Void>> delete(@PathVariable String id) {
 
-		@Autowired
-		   SavingsAccountImplDto serviceDto;
-//			 
-//			  @GetMapping("/dto")
-//			  public Mono<ResponseEntity<Flux<SavingsAccountDto>>> toListDto() {
-//
-//			    return Mono.just(ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON_UTF8)
-//			    		.body(serviceDto.findAll()));
-//
-//			  }
-//
-//			  @GetMapping("dto/{id}")
-//			  public Mono<ResponseEntity<SavingsAccountDto>> searchDto(@PathVariable String id) {
-//
-//			    return serviceDto.findById(id).map(s->ResponseEntity.ok()
-//							.contentType(MediaType.APPLICATION_JSON_UTF8)
-//							.body(s))
-//							.defaultIfEmpty(ResponseEntity.notFound().build());
-//
-//				}
-//
-				@PostMapping("/saveDto")
-				public Mono<SavingsAccountDto> saveDto(@RequestBody SavingsAccountDto savingsAccountDto) {
-				
-					log.info(savingsAccountDto.toString());
+		return service.findById(id).flatMap(s -> {
+			return service.delete(s).then(Mono.just(new ResponseEntity<Void>(HttpStatus.ACCEPTED)));
+		}).defaultIfEmpty(new ResponseEntity<Void>(HttpStatus.NOT_FOUND));
 
-//					return serviceDto.save(savingsAccountDto).map(s->ResponseEntity
-//							.created(URI.create("/api/savingsAccountDto"))
-//							.contentType(MediaType.APPLICATION_JSON_UTF8)
-//							.body(s));
-					
-					return serviceDto.save(savingsAccountDto);
+	}
 
-				}
-//
-//				@PutMapping("/{id}")
-//				public Mono<ResponseEntity<SavingsAccount>> update(@RequestBody SavingsAccountDto savingsAccountDto, @PathVariable String id) {
-//
-//					return serviceDto.update(savingsAccountDto, id).map(s->ResponseEntity
-//									.created(URI.create("/api/savingsAccountDto".concat(s.getId())))
-//									.contentType(MediaType.APPLICATION_JSON_UTF8)
-//									.body(s))
-//							.defaultIfEmpty(ResponseEntity.notFound().build());
-//						
-//				
-//				}
-//				
-//				@DeleteMapping("/{id}")
-//				public Mono<ResponseEntity<Void>> delete(@PathVariable String id) {
-//					
-//					return serviceDto.findById(id).flatMap(s->{
-//						return serviceDto.delete(s).then(Mono.just(new ResponseEntity<Void>(HttpStatus.ACCEPTED)));
-//					}).defaultIfEmpty(new ResponseEntity<Void>(HttpStatus.NOT_FOUND));
-//
-//					
-//				}
+	@PostMapping("/saveDto")
+	public Mono<ResponseEntity<SavingsAccountDto>> saveDto(@RequestBody SavingsAccountDto savingsAccountDto) {
 
+		log.info(savingsAccountDto.toString());
+
+		return serviceDto.save(savingsAccountDto).map(s -> ResponseEntity.created(URI.create("/api/savingsAccount"))
+				.contentType(MediaType.APPLICATION_JSON).body(s));
+
+	}
+	
 
 }

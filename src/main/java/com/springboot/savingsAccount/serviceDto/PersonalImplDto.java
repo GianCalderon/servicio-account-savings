@@ -55,7 +55,7 @@ private static final Logger log = LoggerFactory.getLogger(PersonalImplDto.class)
 		return client.post()
 			   .accept(MediaType.APPLICATION_PROBLEM_JSON_UTF8)
 			   .contentType(MediaType.APPLICATION_PROBLEM_JSON_UTF8)
-		       .body(BodyInserters.fromObject(personalDto))
+		       .body(BodyInserters.fromValue(personalDto))
 			   .retrieve()
 			   .bodyToMono(PersonalDto.class);
 		
