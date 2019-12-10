@@ -5,8 +5,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.springboot.savingsAccount.client.PersonalClient;
 import com.springboot.savingsAccount.document.SavingsAccount;
+import com.springboot.savingsAccount.dto.SavingsAccountDto;
 import com.springboot.savingsAccount.repo.SavingsAccountRepo;
+import com.springboot.savingsAccount.util.UtilConvert;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -14,11 +17,18 @@ import reactor.core.publisher.Mono;
 @Service
 public class SavingsAccountImpl implements SavingsAccountInterface {
 
-	private static final Logger log = LoggerFactory.getLogger(SavingsAccountImpl.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(SavingsAccountImpl.class);
 
 	
 	@Autowired
     SavingsAccountRepo repo;
+	
+	@Autowired
+	UtilConvert convert;
+	
+	@Autowired
+	PersonalClient webCLient;
+	
 	@Override
 	public Flux<SavingsAccount> findAll() {
 		return repo.findAll();
@@ -49,9 +59,29 @@ public class SavingsAccountImpl implements SavingsAccountInterface {
 	}
 
 	@Override
-	public Mono<Void> delete(SavingsAccount SavingsAccount) {
+	public Mono<Void> delete(SavingsAccount savingsAccount) {
 		
-		return repo.delete(SavingsAccount);
+		return repo.delete(savingsAccount);
+	}
+
+	@Override
+	public Mono<SavingsAccountDto> saveDto(SavingsAccountDto savingsAccountDto) {
+	
+	
+
+		return save(convert.convertSavingsAccount(savingsAccountDto)).flatMap(sa -> {
+
+			savingsAccountDto.getHolders().forEach(p -> {
+
+				p.setIdCuenta(sa.getId());
+
+				webCLient.save(p).block();
+
+			});
+
+			return Mono.just(savingsAccountDto);
+		});
+		
 	}
 	
 	

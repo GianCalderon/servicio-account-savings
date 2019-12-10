@@ -18,11 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.springboot.savingsAccount.document.SavingsAccount;
-import com.springboot.savingsAccount.dto.PersonalDto;
 import com.springboot.savingsAccount.dto.SavingsAccountDto;
 import com.springboot.savingsAccount.service.SavingsAccountImpl;
-import com.springboot.savingsAccount.serviceDto.PersonalImplDto;
-import com.springboot.savingsAccount.serviceDto.SavingsAccountImplDto;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -31,13 +28,10 @@ import reactor.core.publisher.Mono;
 @RequestMapping("api/savingsAccount")
 public class SavingsAccountController {
 
-	private static final Logger log = LoggerFactory.getLogger(SavingsAccountController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(SavingsAccountController.class);
 
 	@Autowired
 	SavingsAccountImpl service;
-
-	@Autowired
-	SavingsAccountImplDto serviceDto;
 
 	@GetMapping
 	public Mono<ResponseEntity<Flux<SavingsAccount>>> toList() {
@@ -86,9 +80,9 @@ public class SavingsAccountController {
 	@PostMapping("/saveDto")
 	public Mono<ResponseEntity<SavingsAccountDto>> saveDto(@RequestBody SavingsAccountDto savingsAccountDto) {
 
-		log.info(savingsAccountDto.toString());
+		LOGGER.info(savingsAccountDto.toString());
 
-		return serviceDto.save(savingsAccountDto).map(s -> ResponseEntity.created(URI.create("/api/savingsAccount"))
+		return service.saveDto(savingsAccountDto).map(s -> ResponseEntity.created(URI.create("/api/savingsAccount"))
 				.contentType(MediaType.APPLICATION_JSON).body(s));
 
 	}
