@@ -13,7 +13,9 @@ public class UtilConvert {
 
 		SavingsAccount savingsAccount = new SavingsAccount();
 
+		savingsAccount.setName("Cuenta-Ahorro");
 		savingsAccount.setNumberAccount(savingsAccountDto.getNumberAccount());
+		savingsAccount.setTea(savingsAccountDto.getTea());
 		savingsAccount.setState(savingsAccountDto.getState());
 		savingsAccount.setBalance(savingsAccountDto.getBalance());
 
