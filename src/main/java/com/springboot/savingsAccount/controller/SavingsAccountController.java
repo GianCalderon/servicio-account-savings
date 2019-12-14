@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.springboot.savingsAccount.document.SavingsAccount;
+import com.springboot.savingsAccount.dto.OperationDto;
 import com.springboot.savingsAccount.dto.SavingsAccountDto;
 import com.springboot.savingsAccount.service.SavingsAccountImpl;
 
@@ -42,11 +43,24 @@ public class SavingsAccountController {
 
 	@GetMapping("/{id}")
 	public Mono<ResponseEntity<SavingsAccount>> search(@PathVariable String id) {
+		
+		LOGGER.info("NUMERO DE CUENTA :--->"+id);
 
 		return service.findById(id).map(s -> ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(s))
 				.defaultIfEmpty(ResponseEntity.notFound().build());
 
 	}
+	
+//	@GetMapping("/{numAccount}")
+//	public Mono<ResponseEntity<SavingsAccount>> searchByNumDoc(@PathVariable String numAccount) {
+//		
+//		LOGGER.info("NUMERO DE CUENTA :--->"+numAccount);
+//
+//		return service.findByNumAccount(numAccount).map(s -> ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(s))
+//				.defaultIfEmpty(ResponseEntity.notFound().build());
+//
+//	}
+
 
 	@PostMapping
 	public Mono<ResponseEntity<SavingsAccount>> save(@RequestBody SavingsAccount savingsAccount) {
@@ -67,6 +81,7 @@ public class SavingsAccountController {
 				.defaultIfEmpty(ResponseEntity.notFound().build());
 
 	}
+	
 
 	@DeleteMapping("/{id}")
 	public Mono<ResponseEntity<Void>> delete(@PathVariable String id) {
@@ -86,6 +101,19 @@ public class SavingsAccountController {
 				.contentType(MediaType.APPLICATION_JSON).body(s));
 
 	}
+	
+	@PostMapping("/operation")
+	public Mono<ResponseEntity<SavingsAccount>> operation(@RequestBody OperationDto operationDto) {
+
+		LOGGER.info(operationDto.toString());
+
+		return service.saveOperation(operationDto).map(s -> ResponseEntity.created(URI.create("/api/savingsAccount"))
+				.contentType(MediaType.APPLICATION_JSON).body(s));
+
+	}
+
+	
+	
 	
 
 }

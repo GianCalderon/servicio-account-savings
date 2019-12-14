@@ -7,6 +7,7 @@ public class PersonalDto {
 
 	private String idCuenta;
 	private String tipoDoc;
+	private String nameAccount;
 	private String numDoc;
 	private String name;
 	private String apePat;

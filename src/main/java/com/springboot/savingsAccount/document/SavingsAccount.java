@@ -1,12 +1,12 @@
 package com.springboot.savingsAccount.document;
 
 import java.util.Date;
-
-import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.format.annotation.DateTimeFormat;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.Data;
 
@@ -17,26 +17,44 @@ public class SavingsAccount {
 	@Id
 	private String id;
 	
-	@NotBlank
 	private String name;
 	
-	@NotBlank
 	private String numberAccount;
 	
-	@NotBlank
 	private Double tea;
 	
-	@NotBlank
 	private String state;
 	
-	@NotBlank
 	private int balance;
 	
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	@JsonFormat(pattern = "yyyy-MM-dd")
 	private Date createDate;
 	
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	@JsonFormat(pattern = "yyyy-MM-dd")
 	private Date updateDate;
+	
+	private List<String> idOperation; 
+
+	public SavingsAccount(String name, String numberAccount, Double tea, String state, int balance,
+			Date createDate, Date updateDate) {
+		
+	
+		this.name = name;
+		this.numberAccount = numberAccount;
+		this.tea = tea;
+		this.state = state;
+		this.balance = balance;
+		this.createDate = createDate;
+		this.updateDate = updateDate;
+	}
+
+	public SavingsAccount() {
+	
+	}
+	
+	
+	
+	
 	
 
 }
