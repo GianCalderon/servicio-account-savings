@@ -44,23 +44,12 @@ public class SavingsAccountController {
 	@GetMapping("/{id}")
 	public Mono<ResponseEntity<SavingsAccount>> search(@PathVariable String id) {
 		
-		LOGGER.info("NUMERO DE CUENTA :--->"+id);
+		LOGGER.info("NUMERO DE CUENTA SavinAcount :--->"+id);
 
 		return service.findById(id).map(s -> ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(s))
 				.defaultIfEmpty(ResponseEntity.notFound().build());
 
 	}
-	
-//	@GetMapping("/{numAccount}")
-//	public Mono<ResponseEntity<SavingsAccount>> searchByNumDoc(@PathVariable String numAccount) {
-//		
-//		LOGGER.info("NUMERO DE CUENTA :--->"+numAccount);
-//
-//		return service.findByNumAccount(numAccount).map(s -> ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(s))
-//				.defaultIfEmpty(ResponseEntity.notFound().build());
-//
-//	}
-
 
 	@PostMapping
 	public Mono<ResponseEntity<SavingsAccount>> save(@RequestBody SavingsAccount savingsAccount) {
@@ -74,6 +63,9 @@ public class SavingsAccountController {
 	@PutMapping("/{id}")
 	public Mono<ResponseEntity<SavingsAccount>> update(@RequestBody SavingsAccount savingsAccount,
 			@PathVariable String id) {
+		
+		
+		LOGGER.info("CUENTA PARA GUARDAR :--->"+savingsAccount.toString());
 
 		return service.update(savingsAccount, id)
 				.map(s -> ResponseEntity.created(URI.create("/api/savingsAccount".concat(s.getId())))
@@ -91,6 +83,9 @@ public class SavingsAccountController {
 		}).defaultIfEmpty(new ResponseEntity<Void>(HttpStatus.NOT_FOUND));
 
 	}
+	
+	
+//	OPERACION QUE EXPONEN SERVICIOS
 
 	@PostMapping("/saveDto")
 	public Mono<ResponseEntity<SavingsAccountDto>> saveDto(@RequestBody SavingsAccountDto savingsAccountDto) {
@@ -109,6 +104,17 @@ public class SavingsAccountController {
 
 		return service.saveOperation(operationDto).map(s -> ResponseEntity.created(URI.create("/api/savingsAccount"))
 				.contentType(MediaType.APPLICATION_JSON).body(s));
+
+	}
+	
+	
+	@GetMapping("/cuenta/{numAccount}")
+	public Mono<ResponseEntity<SavingsAccount>> searchByNumDoc(@PathVariable String numAccount) {
+		
+		LOGGER.info("NUMERO DE CUENTA :--->"+numAccount);
+
+		return service.findByNumAccount(numAccount).map(s -> ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(s))
+				.defaultIfEmpty(ResponseEntity.notFound().build());
 
 	}
 

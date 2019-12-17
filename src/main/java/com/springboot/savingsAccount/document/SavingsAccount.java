@@ -3,6 +3,10 @@ package com.springboot.savingsAccount.document;
 import java.util.Date;
 import java.util.List;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -17,15 +21,26 @@ public class SavingsAccount {
 	@Id
 	private String id;
 	
+	@NotNull(message = "Account name must not be null")
+	@NotEmpty(message = "name may not be empty")
 	private String name;
 	
+	@NotNull(message = "Account numberAccount must not be null")
+	@NotEmpty(message = "numberAccount may not be empty")
 	private String numberAccount;
 	
+	
+	@NotNull(message = "Account tea must not be null")
+	@NotEmpty(message = "tea may not be empty")
 	private Double tea;
 	
+	@NotNull(message = "Account state must not be null")
+	@NotEmpty(message = "state may not be empty")
 	private String state;
 	
-	private int balance;
+	@NotNull(message = "Account balance must not be null")
+	@Min(0)
+	private Double balance;
 	
 	@JsonFormat(pattern = "yyyy-MM-dd")
 	private Date createDate;
@@ -35,7 +50,7 @@ public class SavingsAccount {
 	
 	private List<String> idOperation; 
 
-	public SavingsAccount(String name, String numberAccount, Double tea, String state, int balance,
+	public SavingsAccount(String name, String numberAccount, Double tea, String state, Double balance,
 			Date createDate, Date updateDate) {
 		
 	

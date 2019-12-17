@@ -1,5 +1,8 @@
 package com.springboot.savingsAccount.util;
 
+import java.util.ArrayList;
+import java.util.Date;
+
 import org.springframework.stereotype.Component;
 
 import com.springboot.savingsAccount.document.SavingsAccount;
@@ -18,6 +21,9 @@ public class UtilConvert {
 		savingsAccount.setTea(savingsAccountDto.getTea());
 		savingsAccount.setState(savingsAccountDto.getState());
 		savingsAccount.setBalance(savingsAccountDto.getBalance());
+		savingsAccount.setCreateDate(new Date());
+		savingsAccount.setUpdateDate(new Date());
+		savingsAccount.setIdOperation(new ArrayList<String>());
 
 		return savingsAccount;
 

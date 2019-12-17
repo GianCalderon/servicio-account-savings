@@ -10,7 +10,7 @@ public class SavingsAccountDto {
 	private String numberAccount;
 	private Double tea;
 	private String state;
-	private int balance;
+	private Double balance;
 	private List<PersonalDto> holders;
 	
 }
