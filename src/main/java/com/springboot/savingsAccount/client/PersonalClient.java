@@ -21,10 +21,13 @@ import reactor.core.publisher.Mono;
 public class PersonalClient {
 	
 	
-private static final Logger LOGGER = LoggerFactory.getLogger(PersonalClient.class);
+   private static final Logger LOGGER = LoggerFactory.getLogger(PersonalClient.class);
 	
-	@Autowired
-	private WebClient client;
+   
+   WebClient client = WebClient.create("http://localhost:8001/api/personal");	
+   
+//	@AUTOWIRED
+//	PRIVATE WEBCLIENT CLIENT;
 	
 	public Flux<PersonalDto> findAll() {
 		
@@ -37,7 +40,7 @@ private static final Logger LOGGER = LoggerFactory.getLogger(PersonalClient.clas
 	public Mono<PersonalDto> findById(String id) {
 		
 		Map<String,Object> param=new HashMap<String,Object>();
-		
+		param.put("id", id);
 		return client.get().uri("/{id}",param)
 				.accept(MediaType.APPLICATION_JSON)
 				.retrieve()
@@ -66,6 +69,7 @@ private static final Logger LOGGER = LoggerFactory.getLogger(PersonalClient.clas
 
 	public Mono<Void> delete(String id) {
 		
+
 		return client.delete()
 				.uri("/{id}",Collections.singletonMap("id",id))
 				.exchange()
@@ -74,7 +78,10 @@ private static final Logger LOGGER = LoggerFactory.getLogger(PersonalClient.clas
 
 	public Mono<PersonalDto> update(PersonalDto personalDto, String id) {
 		
-		return client.post()
+		LOGGER.info("listo enviar Actualizar: "+personalDto.toString());
+		
+		return client.put()
+				   .uri("/{id}",Collections.singletonMap("id",id))
 				   .accept(MediaType.APPLICATION_JSON)
 				   .contentType(MediaType.APPLICATION_JSON)
 				   .syncBody(personalDto)

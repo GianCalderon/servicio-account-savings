@@ -1,5 +1,9 @@
 package com.springboot.savingsAccount.service;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +12,10 @@ import org.springframework.stereotype.Service;
 import com.springboot.savingsAccount.client.ManageOperationClient;
 import com.springboot.savingsAccount.client.PersonalClient;
 import com.springboot.savingsAccount.document.SavingsAccount;
+import com.springboot.savingsAccount.dto.AccountDto;
+import com.springboot.savingsAccount.dto.CuentaDto;
 import com.springboot.savingsAccount.dto.OperationDto;
+import com.springboot.savingsAccount.dto.PersonalDto;
 import com.springboot.savingsAccount.dto.SavingsAccountDto;
 import com.springboot.savingsAccount.repo.SavingsAccountRepo;
 import com.springboot.savingsAccount.util.UtilConvert;
@@ -30,7 +37,7 @@ public class SavingsAccountImpl implements SavingsAccountInterface {
 	UtilConvert convert;
 	
 	@Autowired
-	PersonalClient webCLient;
+	PersonalClient webCLientPer;
 	
 	@Autowired
 	ManageOperationClient webCLientOpe;
@@ -106,9 +113,9 @@ public class SavingsAccountImpl implements SavingsAccountInterface {
 			savingsAccountDto.getHolders().forEach(p -> {
 
 				p.setNameAccount(sa.getName());
-				p.setIdCuenta(sa.getId());
+				p.setIdAccount(sa.getId());
 
-				webCLient.save(p).block();
+				webCLientPer.save(p).block();
 
 			});
 
@@ -141,10 +148,37 @@ public class SavingsAccountImpl implements SavingsAccountInterface {
 
 
 	});
-				
-				
-
 
   }
+	
+	@Override
+	public Mono<PersonalDto> saveAddCuenta(CuentaDto cuentaDto) {
+		
+	    return repo.save(convert.convertCurrentAccount(cuentaDto)).flatMap(c->{
+	    	
+	    	return webCLientPer.findById(cuentaDto.getDni()).flatMap(p->{
+	    		
+	    		LOGGER.info("Flujo Inicial ---->: "+p.toString());
+	    		
+	    		List<AccountDto> lista=p.getIdCuentas();
+	            
+	    		AccountDto cuenta = new AccountDto();
+	    		cuenta.setNameAccount(c.getNumberAccount());
+	    		cuenta.setNumAccount(c.getNumberAccount());
+
+	    		 lista.add(cuenta);
+	           
+	             p.setIdCuentas(lista);
+	             
+	             LOGGER.info("Flujo Final ----->: "+p.toString());
+	             
+	            return webCLientPer.update(p,cuentaDto.getDni());
+	            
+	 
+	    	});
+	    	
+	    });
+	}
+	
 
 }

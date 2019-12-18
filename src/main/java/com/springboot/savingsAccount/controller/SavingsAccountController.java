@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.springboot.savingsAccount.document.SavingsAccount;
+import com.springboot.savingsAccount.dto.CuentaDto;
 import com.springboot.savingsAccount.dto.OperationDto;
+import com.springboot.savingsAccount.dto.PersonalDto;
 import com.springboot.savingsAccount.dto.SavingsAccountDto;
 import com.springboot.savingsAccount.service.SavingsAccountImpl;
 
@@ -87,10 +89,10 @@ public class SavingsAccountController {
 	
 //	OPERACION QUE EXPONEN SERVICIOS
 
-	@PostMapping("/saveDto")
+	@PostMapping("/personal")
 	public Mono<ResponseEntity<SavingsAccountDto>> saveDto(@RequestBody SavingsAccountDto savingsAccountDto) {
 
-		LOGGER.info(savingsAccountDto.toString());
+		LOGGER.info("Controller ----> "+savingsAccountDto.toString());
 
 		return service.saveDto(savingsAccountDto).map(s -> ResponseEntity.created(URI.create("/api/savingsAccount"))
 				.contentType(MediaType.APPLICATION_JSON).body(s));
@@ -115,6 +117,16 @@ public class SavingsAccountController {
 
 		return service.findByNumAccount(numAccount).map(s -> ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(s))
 				.defaultIfEmpty(ResponseEntity.notFound().build());
+
+	}
+	
+	@PostMapping("/addAccount")
+	public Mono<ResponseEntity<PersonalDto>> saveAddDto(@RequestBody CuentaDto cuentaDto) {
+
+		LOGGER.info(cuentaDto.toString());
+
+		return service.saveAddCuenta(cuentaDto).map(s -> ResponseEntity.created(URI.create("/api/currentAccount"))
+				.contentType(MediaType.APPLICATION_JSON).body(s));
 
 	}
 

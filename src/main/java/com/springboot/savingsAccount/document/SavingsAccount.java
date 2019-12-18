@@ -3,6 +3,7 @@ package com.springboot.savingsAccount.document;
 import java.util.Date;
 import java.util.List;
 
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -31,7 +32,8 @@ public class SavingsAccount {
 	
 	
 	@NotNull(message = "Account tea must not be null")
-	@NotEmpty(message = "tea may not be empty")
+	@Min(12)
+	@Max(20)
 	private Double tea;
 	
 	@NotNull(message = "Account state must not be null")
