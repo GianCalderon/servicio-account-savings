@@ -22,8 +22,8 @@ public class UtilConvert {
 		
 		SavingsAccount savingsAccount = new SavingsAccount();
 
-		savingsAccount.setName("Cuenta-Ahorro");
-		savingsAccount.setNumberAccount(savingsAccountDto.getNumberAccount());
+		savingsAccount.setNameAccount("Cuenta-Ahorro");
+		savingsAccount.setNumberAccount("00102020"+String.valueOf((int)(Math.random()*99999999+1)));
 		savingsAccount.setTea(savingsAccountDto.getTea());
 		savingsAccount.setState(savingsAccountDto.getState());
 		savingsAccount.setBalance(savingsAccountDto.getBalance());
@@ -39,8 +39,8 @@ public class UtilConvert {
 
 		SavingsAccount  savingsAccount = new SavingsAccount();
 
-		savingsAccount.setName("Cuenta-Ahorro");
-		savingsAccount.setNumberAccount(cuentaDto.getNumberAccount());
+		savingsAccount.setNameAccount("Cuenta-Ahorro");
+		savingsAccount.setNumberAccount("00102020"+String.valueOf((int)(Math.random()*99999999+1)));
 		savingsAccount.setState(cuentaDto.getState());
 		savingsAccount.setBalance(cuentaDto.getBalance());
 		savingsAccount.setTea(cuentaDto.getTea());

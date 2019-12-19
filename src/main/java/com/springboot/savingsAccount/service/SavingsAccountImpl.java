@@ -1,18 +1,12 @@
 package com.springboot.savingsAccount.service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.springboot.savingsAccount.client.ManageOperationClient;
 import com.springboot.savingsAccount.client.PersonalClient;
 import com.springboot.savingsAccount.document.SavingsAccount;
-import com.springboot.savingsAccount.dto.AccountDto;
 import com.springboot.savingsAccount.dto.CuentaDto;
 import com.springboot.savingsAccount.dto.OperationDto;
 import com.springboot.savingsAccount.dto.PersonalDto;
@@ -37,10 +31,8 @@ public class SavingsAccountImpl implements SavingsAccountInterface {
 	UtilConvert convert;
 	
 	@Autowired
-	PersonalClient webCLientPer;
-	
-	@Autowired
-	ManageOperationClient webCLientOpe;
+	PersonalClient client;
+
 	
 	
 	@Override
@@ -71,7 +63,7 @@ public class SavingsAccountImpl implements SavingsAccountInterface {
 		
 		return repo.findById(id).flatMap(s -> {
 
-		s.setName(savingsAccount.getName());
+		s.setNameAccount(savingsAccount.getNameAccount());
 		s.setNumberAccount(savingsAccount.getNumberAccount());
 		s.setBalance(savingsAccount.getBalance());
 		s.setState(savingsAccount.getState());
@@ -102,6 +94,8 @@ public class SavingsAccountImpl implements SavingsAccountInterface {
 		
 		return repo.delete(savingsAccount);
 	}
+	
+	
 
 	@Override
 	public Mono<SavingsAccountDto> saveDto(SavingsAccountDto savingsAccountDto) {
@@ -110,12 +104,12 @@ public class SavingsAccountImpl implements SavingsAccountInterface {
 
 		return save(convert.convertSavingsAccount(savingsAccountDto)).flatMap(sa -> {
 
-			savingsAccountDto.getHolders().forEach(p -> {
+			savingsAccountDto.getHeadlines().forEach(titular -> {
 
-				p.setNameAccount(sa.getName());
-				p.setIdAccount(sa.getId());
+				titular.setNameAccount(sa.getNameAccount());
+				titular.setIdAccount(sa.getId());
 
-				webCLientPer.save(p).block();
+				client.save(titular).block();
 
 			});
 
@@ -144,8 +138,6 @@ public class SavingsAccountImpl implements SavingsAccountInterface {
 		}
 		
 		return repo.save(p);
-	
-
 
 	});
 
@@ -156,23 +148,18 @@ public class SavingsAccountImpl implements SavingsAccountInterface {
 		
 	    return repo.save(convert.convertCurrentAccount(cuentaDto)).flatMap(c->{
 	    	
-	    	return webCLientPer.findById(cuentaDto.getDni()).flatMap(p->{
+	    	return client.findByNumDoc(cuentaDto.getDni()).flatMap(titular->{
 	    		
-	    		LOGGER.info("Flujo Inicial ---->: "+p.toString());
-	    		
-	    		List<AccountDto> lista=p.getIdCuentas();
+	    		LOGGER.info("Flujo Inicial ---->: "+titular.toString());
 	            
-	    		AccountDto cuenta = new AccountDto();
-	    		cuenta.setNameAccount(c.getNumberAccount());
-	    		cuenta.setNumAccount(c.getNumberAccount());
+	    		
+	    		titular.setNameAccount(c.getNameAccount());
+	    		titular.setIdAccount(c.getId());
+	    		
 
-	    		 lista.add(cuenta);
-	           
-	             p.setIdCuentas(lista);
+	             LOGGER.info("Flujo Final ----->: "+titular.toString());
 	             
-	             LOGGER.info("Flujo Final ----->: "+p.toString());
-	             
-	            return webCLientPer.update(p,cuentaDto.getDni());
+	            return client.update(titular,cuentaDto.getDni());
 	            
 	 
 	    	});

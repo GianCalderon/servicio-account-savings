@@ -55,7 +55,7 @@ public class PersonalClient {
 		
 		LOGGER.info("listo a enviar: "+personalDto.toString());
 		
-		return client.post()
+		return client.post().uri("/guardar")
 			   .accept(MediaType.APPLICATION_JSON)
 			   .contentType(MediaType.APPLICATION_JSON)
 		       .body(BodyInserters.fromValue(personalDto))
@@ -88,5 +88,22 @@ public class PersonalClient {
 				   .retrieve()
 				   .bodyToMono(PersonalDto.class);
 	}
+	
+	
+	
+	public Mono<PersonalDto> findByNumDoc(String dni) {
+		
+	
+		return client.get()
+				.uri("/doc/{dni}",Collections.singletonMap("dni",dni))
+				.accept(MediaType.APPLICATION_JSON)
+				.retrieve()
+				.bodyToMono(PersonalDto.class);
+		        
+//		        .exchange()
+//		        .flatMapMany(response ->response.bodyToMono(FamilyDTO.class));
+	}
+	
+	
 
 }

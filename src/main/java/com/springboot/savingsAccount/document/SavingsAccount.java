@@ -24,7 +24,7 @@ public class SavingsAccount {
 	
 	@NotNull(message = "Account name must not be null")
 	@NotEmpty(message = "name may not be empty")
-	private String name;
+	private String nameAccount;
 	
 	@NotNull(message = "Account numberAccount must not be null")
 	@NotEmpty(message = "numberAccount may not be empty")
@@ -52,11 +52,11 @@ public class SavingsAccount {
 	
 	private List<String> idOperation; 
 
-	public SavingsAccount(String name, String numberAccount, Double tea, String state, Double balance,
+	public SavingsAccount(String nameAccount, String numberAccount, Double tea, String state, Double balance,
 			Date createDate, Date updateDate) {
 		
 	
-		this.name = name;
+		this.nameAccount = nameAccount;
 		this.numberAccount = numberAccount;
 		this.tea = tea;
 		this.state = state;

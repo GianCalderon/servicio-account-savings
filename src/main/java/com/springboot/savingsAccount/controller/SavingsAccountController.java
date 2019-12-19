@@ -52,15 +52,17 @@ public class SavingsAccountController {
 				.defaultIfEmpty(ResponseEntity.notFound().build());
 
 	}
-
+	
 	@PostMapping
-	public Mono<ResponseEntity<SavingsAccount>> save(@RequestBody SavingsAccount savingsAccount) {
+	public Mono<ResponseEntity<SavingsAccountDto>> saveDto(@RequestBody SavingsAccountDto savingsAccountDto) {
 
-		return service.save(savingsAccount)
-				.map(s -> ResponseEntity.created(URI.create("/api/savingsAccount".concat(s.getId())))
-						.contentType(MediaType.APPLICATION_JSON).body(s));
+		LOGGER.info("Controller ----> "+savingsAccountDto.toString());
+
+		return service.saveDto(savingsAccountDto).map(s -> ResponseEntity.created(URI.create("/api/savingsAccount"))
+				.contentType(MediaType.APPLICATION_JSON).body(s));
 
 	}
+	
 
 	@PutMapping("/{id}")
 	public Mono<ResponseEntity<SavingsAccount>> update(@RequestBody SavingsAccount savingsAccount,
@@ -86,19 +88,6 @@ public class SavingsAccountController {
 
 	}
 	
-	
-//	OPERACION QUE EXPONEN SERVICIOS
-
-	@PostMapping("/personal")
-	public Mono<ResponseEntity<SavingsAccountDto>> saveDto(@RequestBody SavingsAccountDto savingsAccountDto) {
-
-		LOGGER.info("Controller ----> "+savingsAccountDto.toString());
-
-		return service.saveDto(savingsAccountDto).map(s -> ResponseEntity.created(URI.create("/api/savingsAccount"))
-				.contentType(MediaType.APPLICATION_JSON).body(s));
-
-	}
-	
 	@PostMapping("/operation")
 	public Mono<ResponseEntity<SavingsAccount>> operation(@RequestBody OperationDto operationDto) {
 
@@ -109,21 +98,21 @@ public class SavingsAccountController {
 
 	}
 	
-	
-	@GetMapping("/cuenta/{numAccount}")
-	public Mono<ResponseEntity<SavingsAccount>> searchByNumDoc(@PathVariable String numAccount) {
-		
-		LOGGER.info("NUMERO DE CUENTA :--->"+numAccount);
-
-		return service.findByNumAccount(numAccount).map(s -> ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(s))
-				.defaultIfEmpty(ResponseEntity.notFound().build());
-
-	}
+//	
+//	@GetMapping("/cuenta/{numAccount}")
+//	public Mono<ResponseEntity<SavingsAccount>> searchByNumDoc(@PathVariable String numAccount) {
+//		
+//		LOGGER.info("NUMERO DE CUENTA :--->"+numAccount);
+//
+//		return service.findByNumAccount(numAccount).map(s -> ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(s))
+//				.defaultIfEmpty(ResponseEntity.notFound().build());
+//
+//	}
 	
 	@PostMapping("/addAccount")
 	public Mono<ResponseEntity<PersonalDto>> saveAddDto(@RequestBody CuentaDto cuentaDto) {
 
-		LOGGER.info(cuentaDto.toString());
+		LOGGER.info("Controller ---> :"+cuentaDto.toString());
 
 		return service.saveAddCuenta(cuentaDto).map(s -> ResponseEntity.created(URI.create("/api/currentAccount"))
 				.contentType(MediaType.APPLICATION_JSON).body(s));

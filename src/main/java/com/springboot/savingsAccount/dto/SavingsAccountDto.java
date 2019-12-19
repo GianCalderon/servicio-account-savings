@@ -7,11 +7,12 @@ import lombok.Data;
 @Data
 public class SavingsAccountDto {
 
-	private String numberAccount;
+	
 	private Double tea;
 	private String state;
 	private Double balance;
-	private List<PersonalDto> holders;
+	
+	private List<PersonalDto> headlines;
 	
 }
 
