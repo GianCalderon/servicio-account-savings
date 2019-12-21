@@ -1,6 +1,7 @@
 package com.springboot.savingsAccount.service;
 
 import com.springboot.savingsAccount.document.SavingsAccount;
+import com.springboot.savingsAccount.dto.AccountDto;
 import com.springboot.savingsAccount.dto.CuentaDto;
 import com.springboot.savingsAccount.dto.OperationDto;
 import com.springboot.savingsAccount.dto.PersonalDto;
@@ -26,5 +27,7 @@ public interface SavingsAccountInterface{
 	public Mono<SavingsAccount> saveOperation(OperationDto operationDto);
 	
      public Mono<PersonalDto> saveAddCuenta(CuentaDto cuentaDto);
+     
+     public Mono<PersonalDto> valid (CuentaDto cuentaDto);
 	
 }

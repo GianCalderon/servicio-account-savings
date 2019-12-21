@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.springboot.savingsAccount.client.PersonalClient;
 import com.springboot.savingsAccount.document.SavingsAccount;
+import com.springboot.savingsAccount.dto.AccountDto;
 import com.springboot.savingsAccount.dto.CuentaDto;
 import com.springboot.savingsAccount.dto.OperationDto;
 import com.springboot.savingsAccount.dto.PersonalDto;
@@ -35,6 +37,9 @@ public class SavingsAccountController {
 
 	@Autowired
 	SavingsAccountImpl service;
+	
+	@Autowired
+	PersonalClient client;
 
 	@GetMapping
 	public Mono<ResponseEntity<Flux<SavingsAccount>>> toList() {
@@ -98,16 +103,16 @@ public class SavingsAccountController {
 
 	}
 	
-//	
-//	@GetMapping("/cuenta/{numAccount}")
-//	public Mono<ResponseEntity<SavingsAccount>> searchByNumDoc(@PathVariable String numAccount) {
-//		
-//		LOGGER.info("NUMERO DE CUENTA :--->"+numAccount);
-//
-//		return service.findByNumAccount(numAccount).map(s -> ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(s))
-//				.defaultIfEmpty(ResponseEntity.notFound().build());
-//
-//	}
+	
+	@GetMapping("/cuenta/{numAccount}")
+	public Mono<ResponseEntity<SavingsAccount>> searchByNumDoc(@PathVariable String numAccount) {
+		
+		LOGGER.info("NUMERO DE CUENTA :--->"+numAccount);
+
+		return service.findByNumAccount(numAccount).map(s -> ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(s))
+				.defaultIfEmpty(ResponseEntity.notFound().build());
+
+	}
 	
 	@PostMapping("/addAccount")
 	public Mono<ResponseEntity<PersonalDto>> saveAddDto(@RequestBody CuentaDto cuentaDto) {
@@ -115,6 +120,24 @@ public class SavingsAccountController {
 		LOGGER.info("Controller ---> :"+cuentaDto.toString());
 
 		return service.saveAddCuenta(cuentaDto).map(s -> ResponseEntity.created(URI.create("/api/currentAccount"))
+				.contentType(MediaType.APPLICATION_JSON).body(s));
+
+	}
+	
+	@GetMapping("/valid/{dni}")
+	public Flux<AccountDto> searchCuenta(@PathVariable String dni) {
+		
+
+		return client.valid(dni);
+
+	}
+	
+	@PostMapping("/add")
+	public Mono<ResponseEntity<PersonalDto>> saveAdd(@RequestBody CuentaDto cuentaDto) {
+
+		LOGGER.info("Controller ---> :"+cuentaDto.toString());
+
+		return service.valid(cuentaDto).map(s -> ResponseEntity.created(URI.create("/api/currentAccount"))
 				.contentType(MediaType.APPLICATION_JSON).body(s));
 
 	}

@@ -7,6 +7,7 @@ public class PersonalDto {
 
 	private String idAccount;
 	private String nameAccount;
+	private String idCuenta;
 	
 	private String tipoDoc;
 	private String numDoc;
