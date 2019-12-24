@@ -6,8 +6,8 @@ import lombok.Data;
 public class PersonalDto {
 
 	private String idAccount;
-	private String nameAccount;
-	private String idCuenta;
+	private String numberAccount="xxxxxxxxxxxxxx";
+	private String nameAccount="Cuenta-Ahorro";
 	
 	private String tipoDoc;
 	private String numDoc;

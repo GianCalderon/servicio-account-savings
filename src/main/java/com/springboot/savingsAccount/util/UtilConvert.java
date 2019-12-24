@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.springboot.savingsAccount.document.SavingsAccount;
-import com.springboot.savingsAccount.dto.CuentaDto;
+import com.springboot.savingsAccount.dto.AccountDto;
 import com.springboot.savingsAccount.dto.SavingsAccountDto;
 
 @Component
@@ -35,15 +35,15 @@ public class UtilConvert {
 
 	}
 	
-	public SavingsAccount convertCurrentAccount(CuentaDto cuentaDto) {
+	public SavingsAccount convertAccountDto(AccountDto accountDto) {
 
 		SavingsAccount  savingsAccount = new SavingsAccount();
 
 		savingsAccount.setNameAccount("Cuenta-Ahorro");
 		savingsAccount.setNumberAccount("00102020"+String.valueOf((int)(Math.random()*99999999+1)));
-		savingsAccount.setState(cuentaDto.getState());
-		savingsAccount.setBalance(cuentaDto.getBalance());
-		savingsAccount.setTea(cuentaDto.getTea());
+		savingsAccount.setState(accountDto.getState());
+		savingsAccount.setBalance(accountDto.getBalance());
+		savingsAccount.setTea(accountDto.getTea());
 		savingsAccount.setCreateDate(new Date());
 		savingsAccount.setUpdateDate(new Date());
 		savingsAccount.setIdOperation(new ArrayList<String>());

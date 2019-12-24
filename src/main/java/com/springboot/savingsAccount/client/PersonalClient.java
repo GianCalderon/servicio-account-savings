@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import com.springboot.savingsAccount.dto.AccountClient;
 import com.springboot.savingsAccount.dto.AccountDto;
-import com.springboot.savingsAccount.dto.CuentaDto;
 import com.springboot.savingsAccount.dto.PersonalDto;
 
 import reactor.core.publisher.Flux;
@@ -103,13 +103,13 @@ public class PersonalClient {
 		        
 	}
 	
-	public Flux<AccountDto> valid(String dni) {
+	public Flux<AccountClient> extractAccounts(String dni) {
 
 		return client.get()
 				.uri("/valid/{dni}",Collections.singletonMap("dni",dni))
 				.accept(MediaType.APPLICATION_JSON)
 				.retrieve()
-				.bodyToFlux(AccountDto.class);
+				.bodyToFlux(AccountClient.class);
 			
 	}
 	

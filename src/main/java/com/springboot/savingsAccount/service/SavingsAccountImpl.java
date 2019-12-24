@@ -1,6 +1,7 @@
 package com.springboot.savingsAccount.service;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Date;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,12 +10,13 @@ import org.springframework.stereotype.Service;
 
 import com.springboot.savingsAccount.client.PersonalClient;
 import com.springboot.savingsAccount.document.SavingsAccount;
+import com.springboot.savingsAccount.dto.AccountClient;
 import com.springboot.savingsAccount.dto.AccountDto;
-import com.springboot.savingsAccount.dto.CuentaDto;
 import com.springboot.savingsAccount.dto.OperationDto;
 import com.springboot.savingsAccount.dto.PersonalDto;
 import com.springboot.savingsAccount.dto.SavingsAccountDto;
 import com.springboot.savingsAccount.repo.SavingsAccountRepo;
+import com.springboot.savingsAccount.util.CodAccount;
 import com.springboot.savingsAccount.util.UtilConvert;
 
 import reactor.core.publisher.Flux;
@@ -50,14 +52,17 @@ public class SavingsAccountImpl implements SavingsAccountInterface {
 	}
 	
 	@Override
-	public Mono<SavingsAccount> findByNumAccount(String numAccount) {
+	public Mono<SavingsAccount> findByNumAccount(String numberAccount) {
 		
-		return repo.findByNumberAccount(numAccount);
+		return repo.findByNumberAccount(numberAccount);
 	}
 
 	@Override
 	public Mono<SavingsAccount> save(SavingsAccount savingsAccount) {
 		
+		savingsAccount.setCreateDate(new Date());
+		savingsAccount.setUpdateDate(new Date());
+		savingsAccount.setIdOperation(new ArrayList<String>());
 		return repo.save(savingsAccount);
 	}
 
@@ -79,40 +84,26 @@ public class SavingsAccountImpl implements SavingsAccountInterface {
 		});
 	}
 	
-	
-	@Override
-	public Mono<SavingsAccount> updateClient(SavingsAccount savingsAccount, String numAccount) {
-		
-		return repo.findByNumberAccount(numAccount).flatMap(s -> {
-
-		s.setNumberAccount(savingsAccount.getNumberAccount());
-		s.setBalance(savingsAccount.getBalance());
-		s.setState(savingsAccount.getState());
-		return repo.save(s);
-		});
-	}
-
 	@Override
 	public Mono<Void> delete(SavingsAccount savingsAccount) {
 		
 		return repo.delete(savingsAccount);
 	}
-	
-	
 
+	
+	/* Guarda una cuenta con multiples titulares */
 	@Override
-	public Mono<SavingsAccountDto> saveDto(SavingsAccountDto savingsAccountDto) {
+	public Mono<SavingsAccountDto> saveHeadlines(SavingsAccountDto savingsAccountDto) {
 	
 	
 
-		return save(convert.convertSavingsAccount(savingsAccountDto)).flatMap(sa -> {
+		return save(convert.convertSavingsAccount(savingsAccountDto)).flatMap(cuenta -> {
 
 			savingsAccountDto.getHeadlines().forEach(titular -> {
 
-				
-				titular.setNameAccount(sa.getNameAccount());
-				titular.setIdAccount(sa.getNumberAccount());
-				titular.setIdCuenta("001");
+				titular.setIdAccount(cuenta.getId());
+				titular.setNameAccount(cuenta.getNameAccount());
+				titular.setNumberAccount(cuenta.getNumberAccount());
 
 				client.save(titular).block();
 
@@ -122,15 +113,63 @@ public class SavingsAccountImpl implements SavingsAccountInterface {
 		});
 		
 	}
+
+	 /* Guarda una cuenta con un titular */
+	@Override
+	public Mono<PersonalDto> saveHeadline(AccountDto accountDto) {
+
+		return client.extractAccounts(accountDto.getNumDoc()).collectList().flatMap(cuentas -> {
+		
+		int cont = 0;
+
+	     for (int i = 0; i < cuentas.size(); i++) {
+
+				AccountClient obj = cuentas.get(i);
+
+				LOGGER.info("PRUEBA 3 --->" + accountDto.toString());
+
+			    if (obj.getNumberAccount().substring(0, 6).equals(CodAccount.savingsAccount)) cont++;
+
+			}
+	     
+			if (cont == 0) {
+
+				return repo.save(convert.convertAccountDto(accountDto)).flatMap(cuenta -> {
+
+					return client.findByNumDoc(accountDto.getNumDoc()).flatMap(titular -> {
+
+						LOGGER.info("Flujo Inicial ---->: " + titular.toString());
+
+						titular.setIdAccount(cuenta.getId());
+						titular.setNameAccount(cuenta.getNameAccount());
+						titular.setNumberAccount(cuenta.getNumberAccount());
+
+						LOGGER.info("Flujo Final ----->: " + titular.toString());
+
+						return client.update(titular, accountDto.getNumDoc()).flatMap(p->{
+							
+							p.setIdAccount(cuenta.getId());
+							return Mono.just(p);
+						});
+
+					});
+
+				});
+
+			} else {
+
+				return Mono.empty();
+			}
+
+		});
+
+	}
 	
 	@Override
 	public Mono<SavingsAccount> saveOperation(OperationDto operationDto) {
-		
-		
-		
+
 	return repo.findByNumberAccount(operationDto.getNumAccount()).flatMap(p->{
-		
-	
+
 		if(operationDto.getTipoMovement().equals("debito")) {
 			
 			p.setBalance(p.getBalance()-operationDto.getAmount());
@@ -147,71 +186,6 @@ public class SavingsAccountImpl implements SavingsAccountInterface {
 	});
 
   }
-	
-	@Override
-	public Mono<PersonalDto> saveAddCuenta(CuentaDto cuentaDto) {
-		
-
-
-	    return repo.save(convert.convertCurrentAccount(cuentaDto)).flatMap(c->{
-	    	
-	    	return client.findByNumDoc(cuentaDto.getNumDoc()).flatMap(titular->{
-	    		
-	    		LOGGER.info("Flujo Inicial ---->: "+titular.toString());
-	            
-	    		
-	    		titular.setNameAccount(c.getNameAccount());
-	    		titular.setIdAccount(c.getNumberAccount());
-	    		
-
-	             LOGGER.info("Flujo Final ----->: "+titular.toString());
-	             
-	            return client.update(titular,cuentaDto.getNumDoc());
-	            
-	 
-	    	});
-	    	
-	    });
-	}
-
-	@Override
-	public Mono<PersonalDto> valid(CuentaDto cuentaDto) {
-	 
-		
-	    return client.valid(cuentaDto.getNumDoc()).collectList().flatMap(c->{
-	    	int cont=0;
-	    	LOGGER.info("PRUEBA 2 --->"+c.toString());
-	    	LOGGER.info("PRUEBA 2.1 --->"+c.size());
-	    	 for (int i=0; i<c.size();i++) {
-	    		 
-	    		 AccountDto obj=c.get(i);
-	    		
-
-		    		
-	    		 LOGGER.info("PRUEBA 3 --->"+cuentaDto.toString());
-		    	if(obj.getIdAccount().substring(0,6).equals("001020")) {
-		    			
-		    	       cont++;
-		    	
-		    	}
-					
-				}
-
-	    	 LOGGER.info("contador "+cont);
-	    	 if(cont==0) {
-	    		 
-	    		 return saveAddCuenta(cuentaDto);
-	    		 
-	    	 }else {
-	    		 
-	    		 return Mono.empty();
-	    	 }
-	    	 
-//	    	 return Mono.empty();
-	     });
-	     
-	    
-	}
 	
 
 
