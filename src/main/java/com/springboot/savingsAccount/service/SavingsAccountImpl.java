@@ -128,7 +128,7 @@ public class SavingsAccountImpl implements SavingsAccountInterface {
 
 				LOGGER.info("PRUEBA 3 --->" + accountDto.toString());
 
-			    if (obj.getNumberAccount().substring(0, 6).equals(CodAccount.savingsAccount)) cont++;
+			    if (obj.getNumberAccount().substring(0, 6).equals(CodAccount.COD_SAVINGS_ACCOUNT)) cont++;
 
 			}
 	     

@@ -10,14 +10,11 @@ public class AppConfig {
 //	@Value("${config.base.endpoint}")
 //	private String url;
 	
-	@Bean
-	public WebClient registrarWebClient() {
-		
-		
-		return WebClient.create("http://localhost:8001/api/personal");
+  @Bean
+  public WebClient registrarWebClient() {
 
-		
-	
-	}
+    return WebClient.create("http://localhost:8001/api/personal");
+
+  }
 
 }
