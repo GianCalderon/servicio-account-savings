@@ -22,6 +22,7 @@ public class UtilConvert {
 		
 		SavingsAccount savingsAccount = new SavingsAccount();
 
+		
 		savingsAccount.setNameAccount(CodAccount.NAME_SAVINGS_ACCOUNT);
 		savingsAccount.setNumberAccount(CodAccount.COD_SAVINGS_ACCOUNT+String.valueOf((int)(Math.random()*99999999+1)));
 		savingsAccount.setTea(savingsAccountDto.getTea());
@@ -36,19 +37,23 @@ public class UtilConvert {
 	}
 	
 	public SavingsAccount convertAccountDto(AccountDto accountDto) {
+		
+		 LOGGER.info("convetir 1 -->"+accountDto.toString());
 
 		SavingsAccount  savingsAccount = new SavingsAccount();
 
+		savingsAccount.setNameBank(accountDto.getNameBank());
+		savingsAccount.setNumDoc(accountDto.getNumDoc());
 		savingsAccount.setNameAccount(CodAccount.NAME_SAVINGS_ACCOUNT);
 		savingsAccount.setNumberAccount(CodAccount.COD_SAVINGS_ACCOUNT+String.valueOf((int)(Math.random()*99999999+1)));
-		savingsAccount.setState(accountDto.getState());
+		savingsAccount.setState("Activo");
 		savingsAccount.setBalance(accountDto.getBalance());
-		savingsAccount.setTea(accountDto.getTea());
+		savingsAccount.setTea(12.5);
 		savingsAccount.setCreateDate(new Date());
 		savingsAccount.setUpdateDate(new Date());
 		savingsAccount.setIdOperation(new ArrayList<String>());
 
-		
+		 LOGGER.info("convetir 2-->"+savingsAccount.toString());
 		return savingsAccount;
 
 	}

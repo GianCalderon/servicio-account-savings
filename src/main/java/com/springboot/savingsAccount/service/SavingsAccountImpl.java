@@ -117,8 +117,13 @@ public class SavingsAccountImpl implements SavingsAccountInterface {
 	 /* Guarda una cuenta con un titular */
 	@Override
 	public Mono<PersonalDto> saveHeadline(AccountDto accountDto) {
+		
+		LOGGER.info("PRUEBA 1 --->" + accountDto.toString());
+		
 
 		return client.extractAccounts(accountDto.getNumDoc()).collectList().flatMap(cuentas -> {
+			
+			LOGGER.info("PRUEBA 2 tamaño lista --->" + cuentas.size());
 		
 		int cont = 0;
 
@@ -132,9 +137,14 @@ public class SavingsAccountImpl implements SavingsAccountInterface {
 
 			}
 	     
+	     LOGGER.info("PRUEBA 4 --->" + cuentas.toString());
+	     LOGGER.info("PRUEBA 4 --->" + cont);
+	     
 			if (cont == 0) {
 
 				return repo.save(convert.convertAccountDto(accountDto)).flatMap(cuenta -> {
+					
+					 LOGGER.info("PRUEBA 5 --->" + cuenta.toString());
 
 					return client.findByNumDoc(accountDto.getNumDoc()).flatMap(titular -> {
 
@@ -149,6 +159,7 @@ public class SavingsAccountImpl implements SavingsAccountInterface {
 						return client.update(titular, accountDto.getNumDoc()).flatMap(p->{
 							
 							p.setIdAccount(cuenta.getId());
+							p.setNumberAccount(cuenta.getNumberAccount());
 							return Mono.just(p);
 						});
 

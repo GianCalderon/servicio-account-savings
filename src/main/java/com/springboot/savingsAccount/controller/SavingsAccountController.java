@@ -138,7 +138,7 @@ public class SavingsAccountController {
 	
 	
 	@GetMapping("/cuenta/{numberAccount}")
-	public Mono<ResponseEntity<SavingsAccount>> searchByNumDoc(@PathVariable String numberAccount) {
+	public Mono<ResponseEntity<SavingsAccount>> searchByNumAccount(@PathVariable String numberAccount) {
 		
 		LOGGER.info("NUMERO DE CUENTA :--->"+numberAccount);
 

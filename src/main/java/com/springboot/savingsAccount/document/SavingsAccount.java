@@ -9,6 +9,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -25,6 +26,12 @@ public class SavingsAccount {
 	@NotNull(message = "Account name must not be null")
 	@NotEmpty(message = "name may not be empty")
 	private String nameAccount;
+	
+	@NotNull(message = "Account name must not be null")
+	@NotEmpty(message = "name may not be empty")
+	private String nameBank;
+	
+	private String numDoc;
 	
 	@NotNull(message = "Account numberAccount must not be null")
 	@NotEmpty(message = "numberAccount may not be empty")
