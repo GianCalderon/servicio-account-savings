@@ -31,7 +31,7 @@ public class SavingsAccount {
 	@NotEmpty(message = "name may not be empty")
 	private String nameBank;
 	
-	private String numDoc;
+	private List<Headline> headlines;
 	
 	@NotNull(message = "Account numberAccount must not be null")
 	@NotEmpty(message = "numberAccount may not be empty")
@@ -56,8 +56,7 @@ public class SavingsAccount {
 	
 	@JsonFormat(pattern = "yyyy-MM-dd")
 	private Date updateDate;
-	
-	private List<String> idOperation; 
+
 
 	public SavingsAccount(String nameAccount, String numberAccount, Double tea, String state, Double balance,
 			Date createDate, Date updateDate) {

@@ -16,5 +16,5 @@ public class AppConfig {
 		//return WebClient.create("http://gateway-server:9090/api/personal");
 
 	}
-
+	
 }

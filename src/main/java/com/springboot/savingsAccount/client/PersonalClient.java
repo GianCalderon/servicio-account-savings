@@ -94,7 +94,7 @@ public class PersonalClient {
 		
 	
 		return client.get()
-				.uri("/doc/{dni}",Collections.singletonMap("dni",dni))
+				.uri("/numDoc/{dni}",Collections.singletonMap("dni",dni))
 				.accept(MediaType.APPLICATION_JSON)
 				.retrieve()
 				.bodyToMono(PersonalDto.class);

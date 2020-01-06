@@ -20,9 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.springboot.savingsAccount.client.PersonalClient;
 import com.springboot.savingsAccount.document.SavingsAccount;
 import com.springboot.savingsAccount.dto.AccountDto;
-import com.springboot.savingsAccount.dto.OperationDto;
-import com.springboot.savingsAccount.dto.PersonalDto;
-import com.springboot.savingsAccount.dto.SavingsAccountDto;
+import com.springboot.savingsAccount.dto.ManageOperationDto;
 import com.springboot.savingsAccount.service.SavingsAccountImpl;
 
 import reactor.core.publisher.Flux;
@@ -56,11 +54,14 @@ public class SavingsAccountController {
 	}
 	
 	@PostMapping
-	public Mono<ResponseEntity<SavingsAccount>> save(@RequestBody SavingsAccount savingsAccount) {
+	public Mono<ResponseEntity<SavingsAccount>> save(@RequestBody AccountDto accountDto) {
+		
+		LOGGER.info("accountDto ---> "+accountDto.toString());
 
-		return service.save(savingsAccount)
+		return service.save(accountDto)
 				.map(s -> ResponseEntity.created(URI.create("/api/savingsAccount".concat(s.getId())))
-						.contentType(MediaType.APPLICATION_JSON).body(s));
+						 .contentType(MediaType.APPLICATION_JSON).body(s))
+				         .defaultIfEmpty(new ResponseEntity<SavingsAccount>(HttpStatus.NOT_FOUND));
 
 	}
 	
@@ -90,62 +91,33 @@ public class SavingsAccountController {
 	}
 	
 	//OPERACIONES QUE CONSUMEN SERVICIO
+
 	
-	
-	@PostMapping("/operation")
-	public Mono<ResponseEntity<SavingsAccount>> operation(@RequestBody OperationDto operationDto) {
-
-		LOGGER.info(operationDto.toString());
-
-		return service.saveOperation(operationDto).map(s -> ResponseEntity.created(URI.create("/api/savingsAccount"))
-				.contentType(MediaType.APPLICATION_JSON).body(s));
-
-	}
-	
-	
-	@PostMapping("/saveHeadline")
-	public Mono<ResponseEntity<PersonalDto>> saveHeadline(@RequestBody AccountDto accountDto) {
-
-		LOGGER.info("Controller ---> :"+accountDto.toString());
-
-		return service.saveHeadline(accountDto).map(s -> ResponseEntity.created(URI.create("/api/savingsAccount"))
-				.contentType(MediaType.APPLICATION_JSON).body(s))
-				.defaultIfEmpty(new ResponseEntity<PersonalDto>(HttpStatus.CONFLICT));
+	@GetMapping("/dni/{dni}")
+	public Flux<SavingsAccount> searchByDni(@PathVariable String dni) {
 				
+		return service.findByDni(dni);
 
 	}
 	
 	
-	@PostMapping("/saveHeadlines")
-	public Mono<ResponseEntity<SavingsAccountDto>> saveHeadlines(@RequestBody SavingsAccountDto savingsAccountDto) {
-
-		LOGGER.info("Controller ----> "+savingsAccountDto.toString());
-
-		return service.saveHeadlines(savingsAccountDto).map(s -> ResponseEntity.created(URI.create("/api/savingsAccount"))
-				.contentType(MediaType.APPLICATION_JSON).body(s))
-				.defaultIfEmpty(new ResponseEntity<SavingsAccountDto>(HttpStatus.CONFLICT));
-
-	}
-	
-	
-	@GetMapping("dni/{dni}")
-	public Mono<ResponseEntity<PersonalDto>> searchxdni(@PathVariable String dni) {
-				
-		return client.findByNumDoc(dni).map(s -> ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(s))
-				.defaultIfEmpty(ResponseEntity.notFound().build());
-
-	}
-	
-	
-	@GetMapping("/cuenta/{numberAccount}")
-	public Mono<ResponseEntity<SavingsAccount>> searchByNumAccount(@PathVariable String numberAccount) {
+	@GetMapping("/account/{numberAccount}")
+	public Mono<SavingsAccount> searchByNumAccount(@PathVariable String numberAccount) {
 		
 		LOGGER.info("NUMERO DE CUENTA :--->"+numberAccount);
 
-		return service.findByNumAccount(numberAccount).map(s -> ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(s))
-				.defaultIfEmpty(ResponseEntity.notFound().build());
+		return service.findByNumAccount(numberAccount);
 
 	}
+	
+	@GetMapping("/operations/{dni}")
+	public Flux<ManageOperationDto> searchOperations(@PathVariable String dni) {
+		
+		return service.searchOperations(dni);
+
+	}
+	
+	
 
 	
 	

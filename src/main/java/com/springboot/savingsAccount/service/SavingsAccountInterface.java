@@ -1,11 +1,8 @@
 package com.springboot.savingsAccount.service;
 
 import com.springboot.savingsAccount.document.SavingsAccount;
-import com.springboot.savingsAccount.dto.AccountClient;
 import com.springboot.savingsAccount.dto.AccountDto;
-import com.springboot.savingsAccount.dto.OperationDto;
-import com.springboot.savingsAccount.dto.PersonalDto;
-import com.springboot.savingsAccount.dto.SavingsAccountDto;
+import com.springboot.savingsAccount.dto.ManageOperationDto;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -14,14 +11,15 @@ public interface SavingsAccountInterface{
 
 	public Flux<SavingsAccount> findAll();
 	public Mono<SavingsAccount> findById(String id);
-	public Mono<SavingsAccount> save(SavingsAccount savingsAccount);
+	public Mono<SavingsAccount> save(AccountDto accountDto);
 	public Mono<SavingsAccount> update(SavingsAccount savingsAccount, String id);
 	public Mono<Void> delete(SavingsAccount savingsAccount);
 
-	
 	public Mono<SavingsAccount> findByNumAccount(String id);
-	public Mono<SavingsAccount> saveOperation(OperationDto operationDto);	
-	public Mono<PersonalDto> saveHeadline(AccountDto accountDto);     
-	public Mono<SavingsAccountDto> saveHeadlines (SavingsAccountDto savingsAccountDto);
+	public Flux<SavingsAccount> findByDni(String id);
 	
+	public Flux<ManageOperationDto> searchOperations(String dni);
+	
+    
+
 }
